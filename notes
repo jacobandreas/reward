@@ -1,0 +1,16 @@
+batch training with Ray
+
+1: optimize indicator on goal state
+2: observe policy for bad reward fn plus demo, learn correction
+     just require p(good) / p(bad) \propto e(reward(good)) / e(reward(bad))
+       [for every prefix?]
+     keep around a history of interesting trajectories
+3: observe bad policy, demo, correction
+     ditto
+
+===
+
+===
+
+Ray notes:
+unhelpful error message when ray.init not yet called

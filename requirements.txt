@@ -1,0 +1,2 @@
+git+git://github.com/deepmind/pycolab
+ray[rllib]
