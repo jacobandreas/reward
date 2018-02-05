@@ -13,7 +13,7 @@ def task(name, log_time=True):
     yield
     end = time.time()
     if log_time:
-        log("done in %0.2f" % (end - begin))
+        print('%s{%0.2fs}' % ('/'.join(state.path), end - begin))
     state.path.pop()
 
 def log(value):

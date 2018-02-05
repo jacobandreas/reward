@@ -1,0 +1,22 @@
+Traceback (most recent call last):
+  File "../../reward.py", line 46, in <module>
+    main()
+  File "../../reward.py", line 40, in main
+    cache / ('base.maze.%d.txt' % i_task))
+  File "/home/jda/reward/rl/train.py", line 148, in train_base
+    rbuf, rstats = rollout(model, envs)
+  File "/home/jda/reward/rl/train.py", line 75, in rollout
+    act = model.act(batch)
+  File "/home/jda/reward/model/model.py", line 42, in act
+    probs = self.softmax(self.act_logits(self.rep(batch.obs))).data.cpu().numpy()
+  File "/home/jda/anaconda3/lib/python3.6/site-packages/torch/nn/modules/module.py", line 325, in __call__
+    result = self.forward(*input, **kwargs)
+  File "/home/jda/anaconda3/lib/python3.6/site-packages/torch/nn/modules/container.py", line 67, in forward
+    input = module(input)
+  File "/home/jda/anaconda3/lib/python3.6/site-packages/torch/nn/modules/module.py", line 325, in __call__
+    result = self.forward(*input, **kwargs)
+  File "/home/jda/anaconda3/lib/python3.6/site-packages/torch/nn/modules/linear.py", line 55, in forward
+    return F.linear(input, self.weight, self.bias)
+  File "/home/jda/anaconda3/lib/python3.6/site-packages/torch/nn/functional.py", line 835, in linear
+    return torch.addmm(bias, input, weight.t())
+RuntimeError: size mismatch at /opt/conda/conda-bld/pytorch_1512386481460/work/torch/lib/THC/generic/THCTensorMathBlas.cu:243

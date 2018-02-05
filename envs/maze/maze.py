@@ -12,11 +12,17 @@ def _pos(position):
 class MazeEnv(object):
     def __init__(self, maze_id):
         self._game = None
-        with open(Path('envs/maze/data/maze.%d.txt' % maze_id)) as maze_f:
+        maze_path = Path(__file__).resolve().parent
+        with open(Path(maze_path / ('data/maze.%d.txt' % maze_id))) as maze_f:
             data_lines = maze_f.readlines()
-            art = data_lines[:-1]
+        art = data_lines[:-4]
+
         self._art = art
-        self.n_features = len(self._art) * len(self._art[0]) * 2
+        self.n_actions = 4
+        self.n_features = (
+            (len(self._art) * len(self._art[0]) * 2)
+            + self.n_actions
+            + 1)
 
     def reset(self):
         game = ascii_art.ascii_art_to_game(
@@ -25,8 +31,9 @@ class MazeEnv(object):
                 'G': GoalSprite,
                 'D': DeathSprite,
             })
+            
         self._game = game
-        return self._process_step(self._game.its_showtime())
+        return self._process_step(self._game.its_showtime(), 0)
 
         #ui = human_ui.CursesUi(
         #    keys_to_actions={
@@ -37,19 +44,23 @@ class MazeEnv(object):
         #ui.play(game)
 
     def step(self, action):
-        return self._process_step(self._game.play(action))
+        return self._process_step(self._game.play(action), action)
 
-    LAYERS = ["#", "P"]
+    LAYERS = ['P', '#'] #+ [str(i) for i in range(10)]
 
-    def _process_step(self, step):
+    def _process_step(self, step, action):
         obs, rew, discount = step
         obs_data = np.zeros((len(self.LAYERS),) + obs.board.shape)
         for i, layer in enumerate(self.LAYERS):
             obs_data[i, ...] = obs.layers[layer]
         if rew is None:
             rew = 0
+        act_data = np.zeros(self.n_actions)
+        act_data[action] = 1
+        rew_data = [rew]
         term = self._game._game_over
-        return obs_data, rew, term
+        features = np.concatenate((obs_data.ravel(), act_data, rew_data))
+        return features, rew, term
 
     def done(self):
         return self._game._game_over

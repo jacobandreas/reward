@@ -57,7 +57,7 @@ def random_maze(size):
     return tree
 
 def sample_maze():
-    SIZE = 5
+    SIZE = 6
     true_size = SIZE * 2 + 1
 
     tree = random_maze(SIZE)
@@ -81,21 +81,30 @@ def sample_maze():
         board[r, c] = 0
 
     # place path and solve
-    init = tuple(np.random.randint(SIZE, size=2))
+    init = np.random.randint(SIZE, size=2)
     goal = None
+    distractor = None
 
     while goal is None:
-        goal = tuple(np.random.randint(SIZE, size=2))
-        if goal == init:
-            goal = None
+        goal = np.random.randint(SIZE, size=2)
+        distractor = np.random.randint(SIZE, size=2)
+        if (goal == init).all() or (distractor == init).all():
+            goal = distractor = None
             continue
-        raw_init = (init[0] * 2 + 1, init[1] * 2 + 1) 
-        raw_goal = (goal[0] * 2 + 1, goal[1] * 2 + 1)
-        demo = shortest_path(board[...], raw_init, raw_goal)
-        if len(demo) < 5:
-            goal = None
+        raw_init = init * 2 + 1
+        raw_goal = goal * 2 + 1
+        raw_dist = distractor * 2 + 1
+        demo = shortest_path(board, tuple(raw_init), tuple(raw_goal))
+
+        dist_demo1 = shortest_path(board, tuple(raw_init), tuple(raw_dist))
+        dist_demo2 = shortest_path(board, tuple(raw_dist), tuple(raw_goal))
+        dist_cost1 = [np.abs(raw_goal - s).sum() for a, s in dist_demo1]
+        dist_cost2 = [np.abs(raw_goal - s).sum() for a, s in dist_demo2]
+        if min(dist_cost1) < 2 or dist_cost2[0] > 4 or (dist_cost2 - dist_cost2[0]).max() <= 0:
+            goal = distractor = None
             continue
 
+    # render
     art = [[' ' for _ in range(true_size)] for _ in range(true_size)]
     for i in range(true_size):
         for j in range(true_size):
@@ -104,5 +113,44 @@ def sample_maze():
     art[raw_init[0]][raw_init[1]] = 'P'
     art[raw_goal[0]][raw_goal[1]] = 'G'
 
-    actions = [a for a, s in demo]
-    return [''.join(r) for r in art], actions[1:]
+    counter = 0
+    labels = []
+    while counter < 10:
+        pos = 2 * np.random.randint(SIZE, size=2) + 1
+        r, c = pos
+        if art[r][c] != ' ':
+            continue
+        art[r][c] = str(counter)
+        labels.append((counter, pos))
+        counter += 1
+
+    nearest_goal, _ = min(labels, key=lambda x: np.abs(x[1] - raw_goal).sum())
+    hint = 'near %d' % nearest_goal
+
+    correction = None
+    for i in range(min(len(demo), len(dist_demo1))):
+        if demo[i] == dist_demo1[i]:
+            continue
+        good_a, _ = demo[i]
+        _, common_s = demo[i-1]
+        nearest_common, _ = min(labels, key=lambda x: np.abs(x[1] - common_s).sum())
+        translate_a = {
+            0: 'n',
+            1: 's',
+            2: 'w',
+            3: 'e'
+        }[good_a]
+
+        correction = '%s near %d' % (translate_a, nearest_common)
+        break
+    if correction is None:
+        correction = 'keep going'
+
+    opt_actions = [a for a, s in demo]
+    bad_actions = [a for a, s in dist_demo1]
+    return (
+        [''.join(r) for r in art],
+        opt_actions[1:],
+        hint,
+        bad_actions[1:],
+        correction)

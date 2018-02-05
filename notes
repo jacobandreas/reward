@@ -1,16 +1,14 @@
-batch training with Ray
+1. with hints (markers along path)
+2. with corrections (changes near marker relative to fixed path)
 
-1: optimize indicator on goal state
-2: observe policy for bad reward fn plus demo, learn correction
-     just require p(good) / p(bad) \propto e(reward(good)) / e(reward(bad))
-       [for every prefix?]
-     keep around a history of interesting trajectories
-3: observe bad policy, demo, correction
-     ditto
+(3.) with corrections (misspecified reward function)
 
-===
+compare:
+  RL from scratch
+  predict policy from env then fine-tune
+  predict policy from env + {hint, correction} then fine-tune
+  predict reward from env then fine-tune
+  predict reward from env + {hint, correction} then fine-tune
 
-===
-
-Ray notes:
-unhelpful error message when ray.init not yet called
+modeling:
+  convolutional board representation

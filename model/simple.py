@@ -1,7 +1,12 @@
-N_HIDDEN = 64
-
+import gflags
 import numpy as np
 from torch import nn, optim
+
+FLAGS = gflags.FLAGS
+gflags.DEFINE_float('lr', None, 'learning rate')
+gflags.DEFINE_float('discount', None, 'discount factor')
+
+N_HIDDEN = 64
 
 class Model(nn.Module):
     def __init__(self, n_obs):
@@ -15,7 +20,7 @@ class Model(nn.Module):
 
         self.loss = nn.CrossEntropyLoss(reduce=False)
         self.softmax = nn.Softmax(dim=1)
-        self.opt = optim.RMSprop(self.parameters(), lr=3e-4, eps=1e-5, alpha=0.99)
+        self.opt = optim.RMSprop(self.parameters(), lr=FLAGS.lr, eps=1e-5, alpha=0.99)
 
     def forward(self, batch):
         rep = self.rep(batch.obs)
@@ -31,10 +36,10 @@ class Model(nn.Module):
         self.opt.zero_grad()
         loss.backward()
         self.opt.step()
-        return float(loss.data.numpy()[0])
+        return float(loss.data.cpu().numpy()[0])
 
     def act(self, batch):
-        probs = self.softmax(self.act_logits(self.rep(batch.obs))).data.numpy()
+        probs = self.softmax(self.act_logits(self.rep(batch.obs))).data.cpu().numpy()
         actions = np.zeros(probs.shape[0], dtype=np.int32)
         for i, row in enumerate(probs):
             actions[i] = np.random.choice(4, p=row)
