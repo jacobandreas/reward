@@ -29,7 +29,7 @@ class EnvWrapper(object):
 def rollout(model, envs):
     steps = [e.reset() for e in envs]
     obs, rew, term = zip(*steps)
-    batch = Batch.from_obs(np.asarray(obs))
+    batch = Batch.from_obs(obs)
     model_state = model.reset(batch)
 
     done = list(term)

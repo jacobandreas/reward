@@ -6,8 +6,28 @@ from pycolab import human_ui
 from pycolab.prefab_parts import sprites
 from pycolab import things
 
+import torch
+from torch import nn
+
 def _pos(position):
     return np.asarray([position.row, position.col])
+
+class MazeFeaturizer(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.featurize_board = nn.Sequential(
+            nn.Conv2d(2, 16, 3),
+            nn.Tanh()
+            )
+        self.n_output = 1941
+
+    def forward(self, obs):
+        board, others = obs
+        n_batch, n_time, *rest = board.shape
+        board = board.view((n_batch * n_time,) + tuple(rest))
+        board_feats = self.featurize_board(board)
+        board_feats = board_feats.view((n_batch, n_time, -1))
+        return torch.cat((board_feats, others), dim=2)
 
 class MazeEnv(object):
     def __init__(self, maze_id):
@@ -15,14 +35,11 @@ class MazeEnv(object):
         maze_path = Path(__file__).resolve().parent
         with open(Path(maze_path / ('data/maze.%d.txt' % maze_id))) as maze_f:
             data_lines = maze_f.readlines()
-        art = data_lines[:-4]
+        art = [l.strip() for l in data_lines[:-4]]
 
         self._art = art
         self.n_actions = 4
-        self.n_features = (
-            (len(self._art) * len(self._art[0]) * 2)
-            + self.n_actions
-            + 1)
+        self.featurizer = MazeFeaturizer()
 
     def reset(self):
         game = ascii_art.ascii_art_to_game(
@@ -59,7 +76,8 @@ class MazeEnv(object):
         act_data[action] = 1
         rew_data = [rew]
         term = self._game._game_over
-        features = np.concatenate((obs_data.ravel(), act_data, rew_data))
+        #features = np.concatenate((obs_data.ravel(), act_data, rew_data))
+        features = (obs_data, np.concatenate((act_data, rew_data)))
         return features, rew, term
 
     def done(self):

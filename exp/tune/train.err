@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "../../reward.py", line 5, in <module>
+    from model import RnnModel
+  File "/Users/jda/Code/reward/model/__init__.py", line 1, in <module>
+    from .rnn import RnnModel
+  File "/Users/jda/Code/reward/model/rnn.py", line 1, in <module>
+    import gflags
+ModuleNotFoundError: No module named 'gflags'

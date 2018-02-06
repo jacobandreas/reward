@@ -32,7 +32,7 @@ def main():
     if FLAGS.run is None:
         raise Exception("'run' flag must be specified")
     elif FLAGS.run == 'train':
-        model = RnnModel(template_env.n_features, template_env.n_actions)
+        model = RnnModel(template_env.featurizer, template_env.n_actions)
         rl.train(
             model,
             lambda: MazeEnv(np.random.randint(1000)),

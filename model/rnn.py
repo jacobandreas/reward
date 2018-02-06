@@ -13,16 +13,17 @@ gflags.DEFINE_float('w_entropy', None, 'entropy reg weight')
 N_HIDDEN = 64
 
 class RnnModel(nn.Module):
-    def __init__(self, n_obs, n_act):
+    def __init__(self, featurizer, n_act):
         super().__init__()
-        self.rep = nn.Sequential(
-            nn.Linear(n_obs, N_HIDDEN),
-            nn.Tanh(),
-            nn.Linear(N_HIDDEN, N_HIDDEN),
-            )
+        #self.rep = nn.Sequential(
+        #    nn.Linear(n_obs, N_HIDDEN),
+        #    nn.Tanh(),
+        #    nn.Linear(N_HIDDEN, N_HIDDEN),
+        #    )
+        self.rep = featurizer
 
         self.rnn = nn.GRU(
-            input_size=N_HIDDEN,
+            input_size=featurizer.n_output,
             hidden_size=N_HIDDEN,
             num_layers=1,
             batch_first=True)
@@ -40,14 +41,14 @@ class RnnModel(nn.Module):
         self._rnn_state = None
 
     def reset(self, batch):
-        self._rnn_state = Variable(torch.zeros(1, batch.obs.data.shape[0], N_HIDDEN))
+        self._rnn_state = Variable(torch.zeros(1, batch.obs[0].data.shape[0], N_HIDDEN))
         if next(self.rnn.parameters()).is_cuda:
             self._rnn_state = self._rnn_state.cuda()
         return self._rnn_state[0, ...]
 
     @profile
     def forward(self, batch):
-        n_batch, n_slice = batch.obs.data.shape[:2]
+        n_batch, n_slice = batch.obs[0].data.shape[:2]
         rep = self.rep(batch.obs)
         rnn_rep, _ = self.rnn(rep, batch.mstate)
         logits = self.act_logits(rnn_rep).view(n_batch * n_slice, -1)

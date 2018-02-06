@@ -7,8 +7,9 @@ SLICE_SIZE = 5
 
 class Batch(object):
     def __init__(self, obs, mstate, act, rew, cuda=False):
+        assert isinstance(obs, tuple)
         assert (act is None) == (rew is None)
-        assert (act is None) or (obs.shape[0] == act.shape[0] == rew.shape[0])
+        assert (act is None) or (obs[0].shape[0] == act.shape[0] == rew.shape[0])
         self.obs = obs
         self.mstate = mstate
         self.act = act
@@ -23,13 +24,18 @@ class Batch(object):
 
     @classmethod
     def from_obs(cls, obs):
-        return Batch(
-            Variable(FloatTensor(obs.reshape((obs.shape[0], 1, -1)))),
-            None, None, None)
+        assert isinstance(obs[0], tuple)
+        out = []
+        for i_part in range(len(obs[0])):
+            part = np.asarray([o[i_part] for o in obs])
+            var = Variable(FloatTensor(part.reshape((part.shape[0], 1) + part.shape[1:])))
+            out.append(var)
+        return Batch(tuple(out), None, None, None)
 
     @classmethod
     def from_bufs(cls, bufs, batch_size, slice_size):
-        obs = np.zeros((batch_size, slice_size) + bufs[0][0].state.shape, dtype=np.int32)
+        assert isinstance(bufs[0][0].state, tuple)
+        obs = tuple(np.zeros((batch_size, slice_size) + o.shape) for o in bufs[0][0].state)
         assert len(bufs[0][0].model_state.shape) == 1
         mstate = np.zeros((1, batch_size, bufs[0][0].model_state.shape[0]))
         act = np.zeros((batch_size, slice_size), dtype=np.int32)
@@ -40,15 +46,13 @@ class Batch(object):
             for j in range(offset, min(offset + slice_size, len(episode))):
                 transition = episode[j]
                 bj = j - offset
-                obs[i, bj, ...] = transition.state
+                for i_part in range(len(transition.state)):
+                    obs[i_part][i, bj, ...] = transition.state[i_part]
                 act[i, bj] = transition.action
                 rew[i, bj] = transition.forward_reward
             mstate[0, i, :] = episode[offset].model_state
-            obs[i, ...] = transition.state
-            act[i] = transition.action
-            rew[i] = transition.forward_reward
         return Batch(
-            Variable(FloatTensor(obs.reshape((batch_size, slice_size, -1)))),
+            tuple(Variable(FloatTensor(o)) for o in obs),
             Variable(FloatTensor(mstate)),
             Variable(LongTensor(act.astype(np.int64))),
             Variable(FloatTensor(rew)))
