@@ -17,7 +17,8 @@ class RnnModel(nn.Module):
         super().__init__()
         self.rep = nn.Sequential(
             nn.Linear(n_obs, N_HIDDEN),
-            #nn.Tanh())
+            nn.Tanh(),
+            nn.Linear(N_HIDDEN, N_HIDDEN),
             )
 
         self.rnn = nn.GRU(

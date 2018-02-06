@@ -35,7 +35,8 @@ def main():
         model = RnnModel(template_env.n_features, template_env.n_actions)
         rl.train(
             model,
-            lambda: MazeEnv(np.random.randint(100)),
+            lambda: MazeEnv(np.random.randint(1000)),
+            lambda: MazeEnv(1000 + np.random.randint(100)),
             cache / ('base.maze.txt'))
     else:
         raise Exception('no such task: %s' % FLAGS.task)

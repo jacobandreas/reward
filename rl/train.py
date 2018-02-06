@@ -35,7 +35,7 @@ def rollout(model, envs):
     done = list(term)
     bufs = [[] for _ in envs]
     # TODO magic
-    for t in range(50):
+    for t in range(100):
         if all(done):
             break
         if FLAGS.gpu:
@@ -66,14 +66,15 @@ def rollout(model, envs):
     return mc_bufs, stats
 
 @profile
-def train(model, env_builder, cache_file):
+def train(model, train_env_builder, val_env_builder, cache_file):
     if FLAGS.gpu:
         model = model.cuda()
     # TODO magic
-    envs = [EnvWrapper(env_builder) for _ in range(10)]
     stats = Stats.empty()
     loss = 0
-    for i_iter in hlog.loop('iter_%05d', range(1000)):
+    val_envs = [EnvWrapper(val_env_builder) for _ in range(20)]
+    for i_iter in hlog.loop('iter_%05d', range(10000)):
+        envs = [EnvWrapper(train_env_builder) for _ in range(10)]
         bufs = []
         count = 0
         while count < 2 * N_BATCH:
@@ -86,12 +87,21 @@ def train(model, env_builder, cache_file):
             batch = batch.cuda()
         loss += model.train(batch)
 
-        if (i_iter + 1) % 10 == 0:
+        if (i_iter + 1) % 20 == 0:
             for k, v in stats.items():
                 hlog.value(k, v)
             hlog.value('loss', loss)
             stats = Stats.empty()
             loss = 0
+
+            with hlog.task('val'):
+                vstats = Stats.empty()
+                for _ in range(10):
+                    _, vrstats = rollout(model, val_envs)
+                    vstats.update(vrstats)
+
+                for k, v in vstats.items():
+                    hlog.value(k, v)
 
     #eval_bufs, _ = rollout(model, envs)
     #best = max(eval_bufs, key=lambda b: sum(r for o, a, r, mr in b))
