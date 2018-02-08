@@ -6,7 +6,6 @@ from torch.autograd import Variable
 
 FLAGS = gflags.FLAGS
 gflags.DEFINE_float('lr', None, 'learning rate')
-gflags.DEFINE_float('discount', None, 'discount factor')
 gflags.DEFINE_float('w_value', None, 'value loss weight')
 gflags.DEFINE_float('w_entropy', None, 'entropy reg weight')
 
@@ -33,7 +32,7 @@ class RnnModel(nn.Module):
 
         self.loss = nn.CrossEntropyLoss(reduce=False)
         self.softmax = nn.Softmax(dim=2)
-        self.opt = optim.RMSprop(self.parameters(), lr=3e-4, eps=1e-5, alpha=0.99)
+        self.opt = optim.RMSprop(self.parameters(), lr=FLAGS.lr, eps=1e-5, alpha=0.99)
 
         self.e_softmax = nn.Softmax(dim=1)
         self.e_log_softmax = nn.LogSoftmax(dim=1)
@@ -54,12 +53,14 @@ class RnnModel(nn.Module):
         logits = self.act_logits(rnn_rep).view(n_batch * n_slice, -1)
         value = self.value(rnn_rep).view(n_batch * n_slice)
         adv = batch.rew.view(n_batch * n_slice) - value
+        mask = batch.mask.view(n_batch * n_slice)
+        #print(np.abs(adv.data.numpy()).mean())
         surrogate = self.loss(logits, batch.act.view(n_batch * n_slice)) * adv.detach()
         neg_entropy = (self.e_softmax(logits) * self.e_log_softmax(logits)).sum(dim=1)
         loss = (
-            surrogate.mean() 
-            + FLAGS.w_value * adv.pow(2).mean()
-            + FLAGS.w_entropy * neg_entropy.mean())
+            (surrogate * mask).mean()
+            + FLAGS.w_value * (adv.pow(2) * mask).mean()
+            + FLAGS.w_entropy * (neg_entropy * mask).mean())
         return loss
 
     def train(self, batch):
@@ -72,8 +73,10 @@ class RnnModel(nn.Module):
     @profile
     def act(self, batch):
         assert self._rnn_state is not None
+
         rep = self.rep(batch.obs)
         rnn_rep, self._rnn_state = self.rnn(rep, self._rnn_state)
+        #rnn_rep = rep
         probs = self.softmax(self.act_logits(rnn_rep)).data.cpu().numpy()
         # strip time dimension
         probs = probs.squeeze(1)
@@ -81,5 +84,5 @@ class RnnModel(nn.Module):
         for i, row in enumerate(probs):
             actions[i] = np.random.choice(4, p=row)
         # strip stack dimension
-        model_state = self._rnn_state.data[0, ...]
+        model_state = self._rnn_state.data[0, ...]#.numpy()
         return actions, model_state

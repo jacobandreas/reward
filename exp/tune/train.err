@@ -1,8 +1,30 @@
 Traceback (most recent call last):
-  File "../../reward.py", line 5, in <module>
-    from model import RnnModel
-  File "/Users/jda/Code/reward/model/__init__.py", line 1, in <module>
-    from .rnn import RnnModel
-  File "/Users/jda/Code/reward/model/rnn.py", line 1, in <module>
-    import gflags
-ModuleNotFoundError: No module named 'gflags'
+  File "../../reward.py", line 46, in <module>
+    main()
+  File "../../reward.py", line 40, in main
+    cache / ('base.maze.txt'))
+  File "/Users/jda/Code/reward/rl/train.py", line 100, in train
+    _, vrstats = rollout(model, val_envs)
+  File "/Users/jda/Code/reward/rl/train.py", line 43, in rollout
+    act, model_state_ = model.act(batch)
+  File "/Users/jda/Code/reward/model/rnn.py", line 75, in act
+    rep = self.rep(batch.obs)
+  File "/Users/jda/Code/3p/anaconda3/lib/python3.6/site-packages/torch/nn/modules/module.py", line 325, in __call__
+    result = self.forward(*input, **kwargs)
+  File "/Users/jda/Code/reward/envs/maze/maze.py", line 47, in forward
+    return self.featurize(feats)
+  File "/Users/jda/Code/3p/anaconda3/lib/python3.6/site-packages/torch/nn/modules/module.py", line 325, in __call__
+    result = self.forward(*input, **kwargs)
+  File "/Users/jda/Code/3p/anaconda3/lib/python3.6/site-packages/torch/nn/modules/container.py", line 67, in forward
+    input = module(input)
+  File "/Users/jda/Code/3p/anaconda3/lib/python3.6/site-packages/torch/nn/modules/module.py", line 325, in __call__
+    result = self.forward(*input, **kwargs)
+  File "/Users/jda/Code/3p/anaconda3/lib/python3.6/site-packages/torch/nn/modules/linear.py", line 55, in forward
+    return F.linear(input, self.weight, self.bias)
+  File "/Users/jda/Code/3p/anaconda3/lib/python3.6/site-packages/torch/nn/functional.py", line 837, in linear
+    output = input.matmul(weight.t())
+  File "/Users/jda/Code/3p/anaconda3/lib/python3.6/site-packages/torch/autograd/variable.py", line 386, in matmul
+    return torch.matmul(self, other)
+  File "/Users/jda/Code/3p/anaconda3/lib/python3.6/site-packages/torch/functional.py", line 191, in matmul
+    output = torch.mm(tensor1, tensor2)
+KeyboardInterrupt

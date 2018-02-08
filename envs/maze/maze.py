@@ -12,7 +12,7 @@ from torch import nn
 def _pos(position):
     return np.asarray([position.row, position.col])
 
-class MazeFeaturizer(nn.Module):
+class ConvMazeFeaturizer(nn.Module):
     def __init__(self):
         super().__init__()
         self.featurize_board = nn.Sequential(
@@ -29,6 +29,32 @@ class MazeFeaturizer(nn.Module):
         board_feats = board_feats.view((n_batch, n_time, -1))
         return torch.cat((board_feats, others), dim=2)
 
+class MlpMazeFeaturizer(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.n_output = 64
+        self.featurize = nn.Sequential(
+            #nn.Linear(343, 64),
+            nn.Linear(167, 64),
+            #nn.Linear(83, 64),
+            #nn.Tanh(),
+            #nn.Linear(64, 64)
+            )
+
+    def forward(self, obs):
+        board, others = obs
+        n_batch, n_time = board.shape[:2]
+        board = board.view(n_batch, n_time, -1)
+        feats = torch.cat((board, others), dim=2)
+        return self.featurize(feats)
+
+art1 = ["#############",
+        "#DG   P    d#",
+        "#############"]
+art2 = ["#############",
+        "#D    P   Gd#",
+        "#############"]
+
 class MazeEnv(object):
     def __init__(self, maze_id):
         self._game = None
@@ -36,10 +62,14 @@ class MazeEnv(object):
         with open(Path(maze_path / ('data/maze.%d.txt' % maze_id))) as maze_f:
             data_lines = maze_f.readlines()
         art = [l.strip() for l in data_lines[:-4]]
+        #if maze_id % 2 == 0:
+        #    art = art1
+        #else:
+        #    art = art2
 
         self._art = art
         self.n_actions = 4
-        self.featurizer = MazeFeaturizer()
+        self.featurizer = MlpMazeFeaturizer()
 
     def reset(self):
         game = ascii_art.ascii_art_to_game(
@@ -47,6 +77,7 @@ class MazeEnv(object):
                 'P': PlayerSprite,
                 'G': GoalSprite,
                 'D': DeathSprite,
+                'd': DeathSprite,
             })
             
         self._game = game
@@ -113,16 +144,21 @@ class PlayerSprite(sprites.MazeWalker):
             self._east(board, the_plot)
 
         post_goal_dist = sum(np.abs(_pos(self.position) - _pos(things['G'].position)))
+        #import sys
+        #sys.stdout.write(str(actions) + ' ')
 
-        reward = (goal_dist - post_goal_dist) / self.init_goal_dist
+        #reward = (goal_dist - post_goal_dist) / self.init_goal_dist
+        reward = 1. if post_goal_dist == 0 else 0.
         the_plot.add_reward(reward)
         if post_goal_dist == 0:
+            #sys.stdout.write('win')
             the_plot.terminate_episode()
 
         #if self.position == things['G'].position:
         #    the_plot.add_reward(1)
         #    the_plot.terminate_episode()
 
-        if self.position == things['D'].position:
+        if self.position in (things['D'].position, things['d'].position):
+            #sys.stdout.write('lose')
             the_plot.add_reward(-1)
             the_plot.terminate_episode()

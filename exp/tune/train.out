@@ -1,0 +1,534 @@
+iter_00000{1.28s}
+iter_00001{1.25s}
+iter_00002{1.27s}
+iter_00003{1.26s}
+iter_00004{1.28s}
+iter_00005{1.25s}
+iter_00006{1.24s}
+iter_00007{1.28s}
+iter_00008{1.31s}
+iter_00009{1.32s}
+iter_00010{1.27s}
+iter_00011{1.45s}
+iter_00012{1.35s}
+iter_00013{1.28s}
+iter_00014{1.27s}
+iter_00015{1.26s}
+iter_00016{1.25s}
+iter_00017{1.23s}
+iter_00018{1.48s}
+iter_00019/avg_rew 0.0862
+iter_00019/max_rew 1.0000
+iter_00019/min_rew -4.0000
+iter_00019/count 600
+iter_00019/loss -1.0459
+iter_00019/val/avg_rew 0.0252
+iter_00019/val/max_rew 1.0000
+iter_00019/val/min_rew -3.0000
+iter_00019/val/count 200
+iter_00019/val{6.35s}
+iter_00019{7.71s}
+iter_00020{1.25s}
+iter_00021{1.27s}
+iter_00022{2.30s}
+iter_00023{1.29s}
+iter_00024{1.32s}
+iter_00025{1.31s}
+iter_00026{1.31s}
+iter_00027{1.25s}
+iter_00028{1.38s}
+iter_00029{1.29s}
+iter_00030{1.22s}
+iter_00031{1.25s}
+iter_00032{1.23s}
+iter_00033{1.32s}
+iter_00034{1.21s}
+iter_00035{1.30s}
+iter_00036{1.28s}
+iter_00037{1.32s}
+iter_00038{1.31s}
+iter_00039/avg_rew 0.1387
+iter_00039/max_rew 1.0000
+iter_00039/min_rew -3.5000
+iter_00039/count 600
+iter_00039/loss -1.3917
+iter_00039/val/avg_rew -0.0110
+iter_00039/val/max_rew 1.0000
+iter_00039/val/min_rew -3.5000
+iter_00039/val/count 200
+iter_00039/val{6.45s}
+iter_00039{7.73s}
+iter_00040{1.28s}
+iter_00041{1.24s}
+iter_00042{1.28s}
+iter_00043{1.26s}
+iter_00044{1.31s}
+iter_00045{1.36s}
+iter_00046{1.33s}
+iter_00047{1.21s}
+iter_00048{1.26s}
+iter_00049{1.24s}
+iter_00050{1.29s}
+iter_00051{1.30s}
+iter_00052{1.29s}
+iter_00053{1.30s}
+iter_00054{1.22s}
+iter_00055{1.27s}
+iter_00056{1.38s}
+iter_00057{1.29s}
+iter_00058{1.23s}
+iter_00059/avg_rew 0.1665
+iter_00059/max_rew 1.0000
+iter_00059/min_rew -4.5000
+iter_00059/count 600
+iter_00059/loss -1.1763
+iter_00059/val/avg_rew 0.0465
+iter_00059/val/max_rew 1.0000
+iter_00059/val/min_rew -2.5000
+iter_00059/val/count 200
+iter_00059/val{6.27s}
+iter_00059{7.55s}
+iter_00060{1.28s}
+iter_00061{1.29s}
+iter_00062{1.29s}
+iter_00063{1.32s}
+iter_00064{1.16s}
+iter_00065{1.23s}
+iter_00066{1.26s}
+iter_00067{1.26s}
+iter_00068{1.40s}
+iter_00069{1.47s}
+iter_00070{1.56s}
+iter_00071{1.40s}
+iter_00072{1.25s}
+iter_00073{1.25s}
+iter_00074{1.34s}
+iter_00075{1.33s}
+iter_00076{1.21s}
+iter_00077{1.45s}
+iter_00078{1.31s}
+iter_00079/avg_rew 0.1070
+iter_00079/max_rew 1.0000
+iter_00079/min_rew -4.0000
+iter_00079/count 600
+iter_00079/loss -1.3453
+iter_00079/val/avg_rew -0.0179
+iter_00079/val/max_rew 1.0000
+iter_00079/val/min_rew -3.0000
+iter_00079/val/count 200
+iter_00079/val{6.13s}
+iter_00079{7.43s}
+iter_00080{1.22s}
+iter_00081{1.29s}
+iter_00082{1.32s}
+iter_00083{1.19s}
+iter_00084{1.28s}
+iter_00085{1.27s}
+iter_00086{1.18s}
+iter_00087{1.22s}
+iter_00088{1.36s}
+iter_00089{1.26s}
+iter_00090{1.33s}
+iter_00091{1.35s}
+iter_00092{1.26s}
+iter_00093{1.31s}
+iter_00094{1.11s}
+iter_00095{1.32s}
+iter_00096{1.28s}
+iter_00097{1.22s}
+iter_00098{1.27s}
+iter_00099/avg_rew 0.0974
+iter_00099/max_rew 1.0000
+iter_00099/min_rew -5.0000
+iter_00099/count 600
+iter_00099/loss -1.2056
+iter_00099/val/avg_rew 0.0710
+iter_00099/val/max_rew 1.0000
+iter_00099/val/min_rew -2.0000
+iter_00099/val/count 200
+iter_00099/val{6.46s}
+iter_00099{7.81s}
+iter_00100{1.20s}
+iter_00101{1.20s}
+iter_00102{1.22s}
+iter_00103{1.25s}
+iter_00104{1.31s}
+iter_00105{1.31s}
+iter_00106{1.28s}
+iter_00107{1.27s}
+iter_00108{1.23s}
+iter_00109{1.27s}
+iter_00110{1.27s}
+iter_00111{1.24s}
+iter_00112{1.38s}
+iter_00113{1.25s}
+iter_00114{1.22s}
+iter_00115{1.25s}
+iter_00116{0.97s}
+iter_00117{1.33s}
+iter_00118{1.23s}
+iter_00119/avg_rew 0.1429
+iter_00119/max_rew 1.0000
+iter_00119/min_rew -5.0000
+iter_00119/count 590
+iter_00119/loss -1.2951
+iter_00119/val/avg_rew -0.1265
+iter_00119/val/max_rew 1.0000
+iter_00119/val/min_rew -3.0000
+iter_00119/val/count 200
+iter_00119/val{6.56s}
+iter_00119{7.85s}
+iter_00120{1.33s}
+iter_00121{1.30s}
+iter_00122{1.32s}
+iter_00123{1.24s}
+iter_00124{1.31s}
+iter_00125{1.24s}
+iter_00126{1.35s}
+iter_00127{1.21s}
+iter_00128{1.25s}
+iter_00129{1.27s}
+iter_00130{1.27s}
+iter_00131{1.26s}
+iter_00132{1.28s}
+iter_00133{1.26s}
+iter_00134{1.32s}
+iter_00135{1.21s}
+iter_00136{1.35s}
+iter_00137{1.24s}
+iter_00138{1.25s}
+iter_00139/avg_rew 0.1337
+iter_00139/max_rew 1.0000
+iter_00139/min_rew -5.0000
+iter_00139/count 600
+iter_00139/loss -1.3325
+iter_00139/val/avg_rew 0.0350
+iter_00139/val/max_rew 1.0000
+iter_00139/val/min_rew -2.5000
+iter_00139/val/count 200
+iter_00139/val{6.30s}
+iter_00139{7.49s}
+iter_00140{1.28s}
+iter_00141{1.30s}
+iter_00142{1.29s}
+iter_00143{1.28s}
+iter_00144{1.25s}
+iter_00145{1.36s}
+iter_00146{1.28s}
+iter_00147{1.28s}
+iter_00148{1.33s}
+iter_00149{1.18s}
+iter_00150{1.29s}
+iter_00151{1.33s}
+iter_00152{1.31s}
+iter_00153{1.20s}
+iter_00154{1.34s}
+iter_00155{1.27s}
+iter_00156{1.21s}
+iter_00157{1.19s}
+iter_00158{1.33s}
+iter_00159/avg_rew 0.0798
+iter_00159/max_rew 1.0000
+iter_00159/min_rew -5.0000
+iter_00159/count 600
+iter_00159/loss -1.1513
+iter_00159/val/avg_rew 0.0140
+iter_00159/val/max_rew 1.0000
+iter_00159/val/min_rew -4.0000
+iter_00159/val/count 200
+iter_00159/val{6.29s}
+iter_00159{7.62s}
+iter_00160{1.33s}
+iter_00161{1.11s}
+iter_00162{1.23s}
+iter_00163{1.28s}
+iter_00164{1.24s}
+iter_00165{1.25s}
+iter_00166{1.28s}
+iter_00167{1.26s}
+iter_00168{1.24s}
+iter_00169{1.27s}
+iter_00170{1.24s}
+iter_00171{1.36s}
+iter_00172{1.29s}
+iter_00173{1.29s}
+iter_00174{1.22s}
+iter_00175{1.14s}
+iter_00176{1.26s}
+iter_00177{1.27s}
+iter_00178{1.27s}
+iter_00179/avg_rew 0.1193
+iter_00179/max_rew 1.0000
+iter_00179/min_rew -4.0000
+iter_00179/count 600
+iter_00179/loss -1.0951
+iter_00179/val/avg_rew -0.0210
+iter_00179/val/max_rew 1.0000
+iter_00179/val/min_rew -4.0000
+iter_00179/val/count 200
+iter_00179/val{6.51s}
+iter_00179{7.89s}
+iter_00180{1.29s}
+iter_00181{1.30s}
+iter_00182{1.30s}
+iter_00183{1.30s}
+iter_00184{1.26s}
+iter_00185{1.31s}
+iter_00186{1.17s}
+iter_00187{1.27s}
+iter_00188{1.30s}
+iter_00189{1.22s}
+iter_00190{1.30s}
+iter_00191{1.30s}
+iter_00192{1.22s}
+iter_00193{1.22s}
+iter_00194{1.23s}
+iter_00195{1.25s}
+iter_00196{1.28s}
+iter_00197{1.18s}
+iter_00198{1.25s}
+iter_00199/avg_rew 0.1285
+iter_00199/max_rew 1.0000
+iter_00199/min_rew -4.0000
+iter_00199/count 600
+iter_00199/loss -0.9489
+iter_00199/val/avg_rew 0.0223
+iter_00199/val/max_rew 1.0000
+iter_00199/val/min_rew -4.0000
+iter_00199/val/count 200
+iter_00199/val{6.55s}
+iter_00199{7.78s}
+iter_00200{1.22s}
+iter_00201{1.33s}
+iter_00202{1.30s}
+iter_00203{1.17s}
+iter_00204{1.21s}
+iter_00205{1.27s}
+iter_00206{1.27s}
+iter_00207{1.26s}
+iter_00208{1.25s}
+iter_00209{1.29s}
+iter_00210{1.34s}
+iter_00211{1.32s}
+iter_00212{1.28s}
+iter_00213{1.33s}
+iter_00214{1.26s}
+iter_00215{1.24s}
+iter_00216{1.27s}
+iter_00217{1.23s}
+iter_00218{1.25s}
+iter_00219/avg_rew 0.0432
+iter_00219/max_rew 1.0000
+iter_00219/min_rew -4.0000
+iter_00219/count 600
+iter_00219/loss -1.5150
+iter_00219/val/avg_rew -0.0335
+iter_00219/val/max_rew 1.0000
+iter_00219/val/min_rew -3.0000
+iter_00219/val/count 200
+iter_00219/val{6.28s}
+iter_00219{7.53s}
+iter_00220{1.28s}
+iter_00221{1.18s}
+iter_00222{1.29s}
+iter_00223{1.22s}
+iter_00224{1.23s}
+iter_00225{1.25s}
+iter_00226{1.29s}
+iter_00227{1.45s}
+iter_00228{1.24s}
+iter_00229{1.24s}
+iter_00230{1.33s}
+iter_00231{1.34s}
+iter_00232{1.27s}
+iter_00233{1.24s}
+iter_00234{1.25s}
+iter_00235{1.31s}
+iter_00236{1.21s}
+iter_00237{1.20s}
+iter_00238{1.29s}
+iter_00239/avg_rew 0.1669
+iter_00239/max_rew 1.0000
+iter_00239/min_rew -3.5000
+iter_00239/count 610
+iter_00239/loss -1.4043
+iter_00239/val/avg_rew 0.0125
+iter_00239/val/max_rew 1.0000
+iter_00239/val/min_rew -4.0000
+iter_00239/val/count 200
+iter_00239/val{6.22s}
+iter_00239{7.54s}
+iter_00240{1.14s}
+iter_00241{1.22s}
+iter_00242{1.16s}
+iter_00243{1.26s}
+iter_00244{1.26s}
+iter_00245{1.24s}
+iter_00246{1.27s}
+iter_00247{1.22s}
+iter_00248{1.22s}
+iter_00249{1.26s}
+iter_00250{1.27s}
+iter_00251{1.23s}
+iter_00252{1.32s}
+iter_00253{1.22s}
+iter_00254{1.19s}
+iter_00255{1.22s}
+iter_00256{1.28s}
+iter_00257{1.14s}
+iter_00258{1.24s}
+iter_00259/avg_rew 0.2060
+iter_00259/max_rew 1.0000
+iter_00259/min_rew -4.5000
+iter_00259/count 600
+iter_00259/loss -0.9575
+iter_00259/val/avg_rew -0.0723
+iter_00259/val/max_rew 1.0000
+iter_00259/val/min_rew -3.5000
+iter_00259/val/count 200
+iter_00259/val{6.44s}
+iter_00259{7.69s}
+iter_00260{1.28s}
+iter_00261{1.17s}
+iter_00262{1.27s}
+iter_00263{1.24s}
+iter_00264{1.24s}
+iter_00265{1.36s}
+iter_00266{1.20s}
+iter_00267{1.29s}
+iter_00268{1.07s}
+iter_00269{1.37s}
+iter_00270{1.32s}
+iter_00271{1.21s}
+iter_00272{1.36s}
+iter_00273{1.31s}
+iter_00274{1.32s}
+iter_00275{1.32s}
+iter_00276{1.24s}
+iter_00277{1.13s}
+iter_00278{1.30s}
+iter_00279/avg_rew 0.1534
+iter_00279/max_rew 1.0000
+iter_00279/min_rew -4.0000
+iter_00279/count 600
+iter_00279/loss -1.1921
+iter_00279/val/avg_rew 0.0098
+iter_00279/val/max_rew 1.0000
+iter_00279/val/min_rew -4.0000
+iter_00279/val/count 200
+iter_00279/val{6.16s}
+iter_00279{7.51s}
+iter_00280{1.25s}
+iter_00281{1.27s}
+iter_00282{1.27s}
+iter_00283{1.26s}
+iter_00284{1.31s}
+iter_00285{1.19s}
+iter_00286{1.30s}
+iter_00287{1.23s}
+iter_00288{1.17s}
+iter_00289{1.25s}
+iter_00290{1.27s}
+iter_00291{1.26s}
+iter_00292{1.28s}
+iter_00293{1.27s}
+iter_00294{1.50s}
+iter_00295{1.18s}
+iter_00296{1.31s}
+iter_00297{1.30s}
+iter_00298{1.31s}
+iter_00299/avg_rew 0.1539
+iter_00299/max_rew 1.0000
+iter_00299/min_rew -4.0000
+iter_00299/count 610
+iter_00299/loss -1.3103
+iter_00299/val/avg_rew 0.0573
+iter_00299/val/max_rew 1.0000
+iter_00299/val/min_rew -3.0000
+iter_00299/val/count 200
+iter_00299/val{6.27s}
+iter_00299{7.52s}
+iter_00300{1.27s}
+iter_00301{1.29s}
+iter_00302{1.18s}
+iter_00303{1.14s}
+iter_00304{1.37s}
+iter_00305{1.14s}
+iter_00306{1.26s}
+iter_00307{1.36s}
+iter_00308{1.22s}
+iter_00309{1.23s}
+iter_00310{1.28s}
+iter_00311{1.23s}
+iter_00312{1.27s}
+iter_00313{1.30s}
+iter_00314{1.28s}
+iter_00315{1.34s}
+iter_00316{1.22s}
+iter_00317{1.31s}
+iter_00318{1.24s}
+iter_00319/avg_rew 0.1057
+iter_00319/max_rew 1.0000
+iter_00319/min_rew -4.5000
+iter_00319/count 600
+iter_00319/loss -1.3266
+iter_00319/val/avg_rew -0.0060
+iter_00319/val/max_rew 1.0000
+iter_00319/val/min_rew -3.0000
+iter_00319/val/count 200
+iter_00319/val{6.21s}
+iter_00319{7.42s}
+iter_00320{1.27s}
+iter_00321{1.31s}
+iter_00322{1.25s}
+iter_00323{1.25s}
+iter_00324{1.21s}
+iter_00325{1.27s}
+iter_00326{1.25s}
+iter_00327{1.19s}
+iter_00328{1.23s}
+iter_00329{1.36s}
+iter_00330{1.25s}
+iter_00331{1.17s}
+iter_00332{1.28s}
+iter_00333{1.37s}
+iter_00334{1.25s}
+iter_00335{1.31s}
+iter_00336{1.24s}
+iter_00337{1.39s}
+iter_00338{1.29s}
+iter_00339/avg_rew 0.1086
+iter_00339/max_rew 1.0000
+iter_00339/min_rew -4.5000
+iter_00339/count 600
+iter_00339/loss -1.2506
+iter_00339/val/avg_rew -0.0115
+iter_00339/val/max_rew 1.0000
+iter_00339/val/min_rew -3.0000
+iter_00339/val/count 200
+iter_00339/val{6.46s}
+iter_00339{7.69s}
+iter_00340{1.25s}
+iter_00341{1.40s}
+iter_00342{1.32s}
+iter_00343{1.25s}
+iter_00344{1.24s}
+iter_00345{1.19s}
+iter_00346{1.17s}
+iter_00347{1.27s}
+iter_00348{1.28s}
+iter_00349{1.25s}
+iter_00350{1.31s}
+iter_00351{1.25s}
+iter_00352{1.27s}
+iter_00353{1.17s}
+iter_00354{1.29s}
+iter_00355{1.34s}
+iter_00356{1.28s}
+iter_00357{1.28s}
+iter_00358{1.23s}
+iter_00359/avg_rew 0.0625
+iter_00359/max_rew 1.0000
+iter_00359/min_rew -4.0000
+iter_00359/count 600
+iter_00359/loss -1.3781

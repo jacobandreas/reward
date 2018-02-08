@@ -57,7 +57,7 @@ def random_maze(size):
     return tree
 
 def sample_maze():
-    SIZE = 6
+    SIZE = 4
     true_size = SIZE * 2 + 1
 
     tree = random_maze(SIZE)
