@@ -46,18 +46,17 @@ class Batch(object):
         rew = np.zeros((batch_size, slice_size))
         mask = np.zeros((batch_size, slice_size))
         #print(1)
-        with hlog.task('dummy'):
-            for i, samp in enumerate(np.random.randint(len(bufs), size=batch_size)):
-                episode = bufs[samp]
-                offset = np.random.randint(max(len(episode) - slice_size, 1))
-                for j in range(offset, min(offset + slice_size, len(episode))):
-                    transition = episode[j]
-                    bj = j - offset
-                    for i_part in range(len(transition.state)):
-                        obs[i_part][i, bj, ...] = transition.state[i_part]
-                    act[i, bj] = transition.action
-                    rew[i, bj] = transition.forward_reward
-                    mask[i, bj] = 1
+        for i, samp in enumerate(np.random.randint(len(bufs), size=batch_size)):
+            episode = bufs[samp]
+            offset = np.random.randint(max(len(episode) - slice_size, 1))
+            for j in range(offset, min(offset + slice_size, len(episode))):
+                transition = episode[j]
+                bj = j - offset
+                for i_part in range(len(transition.state)):
+                    obs[i_part][i, bj, ...] = transition.state[i_part]
+                act[i, bj] = transition.action
+                rew[i, bj] = transition.forward_reward
+                mask[i, bj] = 1
                 #mstate[0, i, :] = episode[offset].model_state
         #print(2)
         return Batch(

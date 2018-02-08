@@ -11,7 +11,7 @@ gflags.DEFINE_boolean('gpu', False, 'use the gpu')
 gflags.DEFINE_float('discount', None, 'discount factor')
 
 # TODO magic
-N_BATCH = 2000
+N_BATCH = 4000
 N_SLICE = 100
 N_ROLLOUT = 50
 
