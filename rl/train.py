@@ -13,7 +13,7 @@ gflags.DEFINE_float('discount', None, 'discount factor')
 # TODO magic
 N_BATCH = 2000
 N_SLICE = 100
-N_ROLLOUT = N_SLICE
+N_ROLLOUT = 50
 
 class EnvWrapper(object):
     def __init__(self, env_builder):
@@ -84,7 +84,7 @@ def train(model, train_env_builder, val_env_builder, cache_file):
     # TODO magic
     stats = Stats.empty()
     loss = 0
-    #val_envs = [EnvWrapper(val_env_builder) for _ in range(20)]
+    val_envs = [EnvWrapper(val_env_builder) for _ in range(20)]
     for i_iter in hlog.loop('iter_%05d', range(10000)):
         bufs = []
         count = 0
@@ -108,3 +108,19 @@ def train(model, train_env_builder, val_env_builder, cache_file):
             hlog.value('loss', loss)
             stats = Stats.empty()
             loss = 0
+
+            with hlog.task('val'):
+                vstats = Stats.empty()
+                for _ in range(10):
+                    _, vrstats = rollout(model, val_envs)
+                    vstats.update(vrstats)
+
+                for k, v in vstats.items():
+                    hlog.value(k, v)
+
+    #eval_bufs, _ = rollout(model, envs)
+    #best = max(eval_bufs, key=lambda b: sum(r for o, a, r, mr in b))
+    #actions = [a for o, a, r, mr in best]
+    #hlog.value('best_rew', sum(r for o, a, r, mr in b))
+    #with open(cache_file, 'w') as cache_f:
+    #    print(' '.join(str(a) for a in actions), file=cache_f)
