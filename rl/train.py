@@ -74,7 +74,7 @@ def rollout(model, envs):
         forward_bufs.append(forward_buf)
         r += (sum(t.reward for t in buf))
 
-    print(r / len(bufs))
+    #print(r / len(bufs))
     return forward_bufs, stats
 
 @profile

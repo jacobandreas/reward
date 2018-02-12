@@ -19,7 +19,7 @@ class ConvMazeFeaturizer(nn.Module):
             nn.Conv2d(2, 16, 3),
             nn.Tanh()
             )
-        self.n_output = 1941
+        self.n_output = 789
 
     def forward(self, obs):
         board, others = obs
@@ -70,6 +70,7 @@ class MazeEnv(object):
         self._art = art
         self.n_actions = 4
         self.featurizer = MlpMazeFeaturizer()
+        #self.featurizer = ConvMazeFeaturizer()
 
     def reset(self):
         game = ascii_art.ascii_art_to_game(

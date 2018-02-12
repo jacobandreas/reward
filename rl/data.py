@@ -18,7 +18,7 @@ class Batch(object):
 
     def cuda(self):
         return Batch(
-            self.obs.cuda(),
+            tuple(o.cuda() for o in self.obs),
             None if self.mstate is None else self.mstate.cuda(),
             None if self.act is None else self.act.cuda(),
             None if self.rew is None else self.rew.cuda(),
@@ -40,7 +40,7 @@ class Batch(object):
         assert isinstance(bufs[0][0].state, tuple)
         obs = tuple(np.zeros((batch_size, slice_size) + o.shape) for o in bufs[0][0].state)
         assert len(bufs[0][0].model_state.shape) == 1
-        print('!', bufs[0][0].model_state.shape[0])
+        #print('!', bufs[0][0].model_state.shape[0])
         mstate = np.zeros((1, batch_size, bufs[0][0].model_state.shape[0]))
         act = np.zeros((batch_size, slice_size), dtype=np.int32)
         rew = np.zeros((batch_size, slice_size))
