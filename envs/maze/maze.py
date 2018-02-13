@@ -1,165 +1,161 @@
-import curses
 import numpy as np
-from pathlib import Path
-from pycolab import ascii_art
-from pycolab import human_ui
-from pycolab.prefab_parts import sprites
-from pycolab import things
 
-import torch
-from torch import nn
+NORTH = 0
+SOUTH = 1
+WEST = 2
+EAST = 3
 
-def _pos(position):
-    return np.asarray([position.row, position.col])
+PLAYER = 'P'
+GOAL = 'G'
+WALL = '#'
+MARKERS = [str(i) for i in range(10)]
 
-class ConvMazeFeaturizer(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.featurize_board = nn.Sequential(
-            nn.Conv2d(2, 16, 3),
-            nn.Tanh()
-            )
-        self.n_output = 789
+def shortest_path(board, init, goal):
+    def neighbors(node):
+        r, c = node
+        out = []
+        if r > 0 and not board[r-1, c]:
+            out.append((NORTH, (r-1, c)))
+        if r < board.shape[0] - 1 and not board[r+1, c]:
+            out.append((SOUTH, (r+1, c)))
+        if c > 0 and not board[r, c-1]:
+            out.append((EAST, (r, c-1)))
+        if c < board.shape[1] - 1 and not board[r, c+1]:
+            out.append((WEST, (r, c+1)))
+        return out
 
-    def forward(self, obs):
-        board, others = obs
-        n_batch, n_time, *rest = board.shape
-        board = board.view((n_batch * n_time,) + tuple(rest))
-        board_feats = self.featurize_board(board)
-        board_feats = board_feats.view((n_batch, n_time, -1))
-        return torch.cat((board_feats, others), dim=2)
+    stack = [((None, init),)]
+    visited = set()
+    while len(stack) > 0:
+        history = stack.pop(0)
+        action, node = history[-1]
+        if node == goal:
+            return history
+        if node in visited:
+            continue
+        visited.add(node)
+        for neighbor in neighbors(node):
+            stack.append(history + (neighbor,))
+    assert False
 
-class MlpMazeFeaturizer(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.n_output = 64
-        self.featurize = nn.Sequential(
-            #nn.Linear(343, 64),
-            nn.Linear(167, 64),
-            #nn.Linear(83, 64),
-            #nn.Tanh(),
-            #nn.Linear(64, 64)
-            )
+def random_maze(size):
+    # crappy random spanning tree
+    vert_edges = [((i,j), (i+1,j)) for i in range(size-1) for j in range(size)]
+    horiz_edges = [((i,j), (i,j+1)) for i in range(size) for j in range(size-1)]
+    edges = vert_edges + horiz_edges
+    np.random.shuffle(edges)
+    tree = []
+    nodes = set(sum(edges, ()))
+    groups = {n: {n} for n in nodes}
+    while len(tree) < len(nodes) - 1:
+        fr, to = edge = edges.pop()
+        if fr in groups[to]:
+            continue
+        tree.append(edge)
+        groups[fr] |= groups[to]
+        for to_ in groups[to]:
+            groups[to_] = groups[fr]
 
-    def forward(self, obs):
-        board, others = obs
-        n_batch, n_time = board.shape[:2]
-        board = board.view(n_batch, n_time, -1)
-        feats = torch.cat((board, others), dim=2)
-        return self.featurize(feats)
+        groups[to] = groups[fr]
+    assert groups[to] == nodes
+    assert set(sum(tree, ())) == nodes
+    return tree
 
-art1 = ["#############",
-        "#DG   P    d#",
-        "#############"]
-art2 = ["#############",
-        "#D    P   Gd#",
-        "#############"]
+def sample_maze():
+    SIZE = 4
+    true_size = SIZE * 2 + 1
 
-class MazeEnv(object):
-    def __init__(self, maze_id):
-        self._game = None
-        maze_path = Path(__file__).resolve().parent
-        with open(Path(maze_path / ('data/maze.%d.txt' % maze_id))) as maze_f:
-            data_lines = maze_f.readlines()
-        art = [l.strip() for l in data_lines[:-4]]
-        #if maze_id % 2 == 0:
-        #    art = art1
-        #else:
-        #    art = art2
+    tree = random_maze(SIZE)
+    board = np.zeros((true_size, true_size))
 
-        self._art = art
-        self.n_actions = 4
-        self.featurizer = MlpMazeFeaturizer()
-        #self.featurizer = ConvMazeFeaturizer()
+    # create walls
+    board[0::2, :] = 1
+    board[:, 0::2] = 1
 
-    def reset(self):
-        game = ascii_art.ascii_art_to_game(
-            self._art, what_lies_beneath=' ', sprites={
-                'P': PlayerSprite,
-                'G': GoalSprite,
-                'D': DeathSprite,
-                'd': DeathSprite,
-            })
-            
-        self._game = game
-        return self._process_step(self._game.its_showtime(), 0)
+    # knock out walls
+    sp_tree = random_maze(SIZE)
+    for fr, to in sp_tree:
+        if fr[0] == to[0]:
+            r = fr[0] * 2 + 1
+            c = fr[1] * 2 + 2
+        else:
+            assert fr[1] == to[1]
+            r = fr[0] * 2 + 2
+            c = fr[1] * 2 + 1
+        assert board[r, c] == 1
+        board[r, c] = 0
 
-        #ui = human_ui.CursesUi(
-        #    keys_to_actions={
-        #        curses.KEY_UP: 0, curses.KEY_DOWN: 1, curses.KEY_LEFT: 2,
-        #        curses.KEY_RIGHT: 3},
-        #    delay=100)
+    # place path and solve
+    init = np.random.randint(SIZE, size=2)
+    goal = None
+    distractor = None
 
-        #ui.play(game)
+    while goal is None:
+        goal = np.random.randint(SIZE, size=2)
+        distractor = np.random.randint(SIZE, size=2)
+        if (goal == init).all() or (distractor == init).all():
+            goal = distractor = None
+            continue
+        raw_init = init * 2 + 1
+        raw_goal = goal * 2 + 1
+        raw_dist = distractor * 2 + 1
+        demo = shortest_path(board, tuple(raw_init), tuple(raw_goal))
 
-    def step(self, action):
-        return self._process_step(self._game.play(action), action)
+        dist_demo1 = shortest_path(board, tuple(raw_init), tuple(raw_dist))
+        dist_demo2 = shortest_path(board, tuple(raw_dist), tuple(raw_goal))
+        dist_cost1 = [np.abs(raw_goal - s).sum() for a, s in dist_demo1]
+        dist_cost2 = [np.abs(raw_goal - s).sum() for a, s in dist_demo2]
+        if min(dist_cost1) < 2 or dist_cost2[0] > 4 or (dist_cost2 - dist_cost2[0]).max() <= 0:
+            goal = distractor = None
+            continue
 
-    LAYERS = ['P', '#'] #+ [str(i) for i in range(10)]
+    # render
+    art = [[' ' for _ in range(true_size)] for _ in range(true_size)]
+    for i in range(true_size):
+        for j in range(true_size):
+            if board[i, j] == 1:
+                art[i][j] = '#'
+    art[raw_init[0]][raw_init[1]] = 'P'
+    art[raw_goal[0]][raw_goal[1]] = 'G'
 
-    def _process_step(self, step, action):
-        obs, rew, discount = step
-        obs_data = np.zeros((len(self.LAYERS),) + obs.board.shape)
-        for i, layer in enumerate(self.LAYERS):
-            obs_data[i, ...] = obs.layers[layer]
-        if rew is None:
-            rew = 0
-        act_data = np.zeros(self.n_actions)
-        act_data[action] = 1
-        rew_data = [rew]
-        term = self._game._game_over
-        #features = np.concatenate((obs_data.ravel(), act_data, rew_data))
-        features = (obs_data, np.concatenate((act_data, rew_data)))
-        return features, rew, term
+    counter = 0
+    labels = []
+    while counter < 10:
+        pos = 2 * np.random.randint(SIZE, size=2) + 1
+        r, c = pos
+        if art[r][c] != ' ':
+            continue
+        art[r][c] = str(counter)
+        labels.append((counter, pos))
+        counter += 1
 
-    def done(self):
-        return self._game._game_over
+    nearest_goal, _ = min(labels, key=lambda x: np.abs(x[1] - raw_goal).sum())
+    hint = 'near %d' % nearest_goal
 
-class GoalSprite(things.Sprite):
-    def update(self, actions, board, layers, backdrop, things, the_plot):
-        pass
+    correction = None
+    for i in range(min(len(demo), len(dist_demo1))):
+        if demo[i] == dist_demo1[i]:
+            continue
+        good_a, _ = demo[i]
+        _, common_s = demo[i-1]
+        nearest_common, _ = min(labels, key=lambda x: np.abs(x[1] - common_s).sum())
+        translate_a = {
+            0: 'n',
+            1: 's',
+            2: 'w',
+            3: 'e'
+        }[good_a]
 
-class DeathSprite(things.Sprite):
-    def update(self, actions, board, layers, backdrop, things, the_plot):
-        pass
+        correction = '%s near %d' % (translate_a, nearest_common)
+        break
+    if correction is None:
+        correction = 'keep going'
 
-class PlayerSprite(sprites.MazeWalker):
-    def __init__(self, corner, position, character):
-        super(PlayerSprite, self).__init__(
-            corner, position, character, impassable='#')
-        self.init_goal_dist = None
-
-    def update(self, actions, board, layers, backdrop, things, the_plot):
-        goal_dist = sum(np.abs(_pos(self.position) - _pos(things['G'].position)))
-        if self.init_goal_dist is None:
-            self.init_goal_dist = goal_dist
-
-	# apply motion commands.
-        if actions == 0:
-            self._north(board, the_plot)
-        elif actions == 1:
-            self._south(board, the_plot)
-        elif actions == 2:
-            self._west(board, the_plot)
-        elif actions == 3:
-            self._east(board, the_plot)
-
-        post_goal_dist = sum(np.abs(_pos(self.position) - _pos(things['G'].position)))
-        #import sys
-        #sys.stdout.write(str(actions) + ' ')
-
-        #reward = (goal_dist - post_goal_dist) / self.init_goal_dist
-        reward = 1. if post_goal_dist == 0 else 0.
-        the_plot.add_reward(reward)
-        if post_goal_dist == 0:
-            #sys.stdout.write('win')
-            the_plot.terminate_episode()
-
-        #if self.position == things['G'].position:
-        #    the_plot.add_reward(1)
-        #    the_plot.terminate_episode()
-
-        if self.position in (things['D'].position, things['d'].position):
-            #sys.stdout.write('lose')
-            the_plot.add_reward(-1)
-            the_plot.terminate_episode()
+    opt_actions = [a for a, s in demo]
+    bad_actions = [a for a, s in dist_demo1]
+    return (
+        [''.join(r) for r in art],
+        opt_actions[1:],
+        hint,
+        bad_actions[1:],
+        correction)

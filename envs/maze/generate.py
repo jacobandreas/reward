@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from maze_utils import sample_maze
+from maze import sample_maze
 
 from pathlib import Path
 import numpy as np

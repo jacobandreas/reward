@@ -17,15 +17,15 @@ N_ROLLOUT = 50
 
 class EnvWrapper(object):
     def __init__(self, env_builder):
-        self.underlying = env_builder()
+        self._underlying = env_builder()
 
     def reset(self):
-        return self.underlying.reset()
+        return self._underlying.reset()
 
     def step(self, action):
-        if self.underlying.done():
+        if self._underlying.done():
             return (None, None, None)
-        return self.underlying.step(action)
+        return self._underlying.step(action)
 
 @profile
 def rollout(model, envs):
@@ -102,7 +102,7 @@ def train(model, train_env_builder, val_env_builder, cache_file):
             batch = batch.cuda()
         loss += model.train(batch)
 
-        if (i_iter + 1) % 10 == 0:
+        if (i_iter + 1) % 25 == 0:
             for k, v in stats.items():
                 hlog.value(k, v)
             hlog.value('loss', loss)

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from envs import MetaRlWrapperEnv
 from envs.maze import MazeEnv
 from misc import hlog, fakeprof
 from model import RnnModel
@@ -28,15 +29,15 @@ def get_cache():
 def main():
     seed()
     cache = get_cache()
-    template_env = MazeEnv(0)
+    template_env = MetaRlWrapperEnv(MazeEnv(0))
     if FLAGS.run is None:
         raise Exception("'run' flag must be specified")
     elif FLAGS.run == 'train':
         model = RnnModel(template_env.featurizer, template_env.n_actions)
         rl.train(
             model,
-            lambda: MazeEnv(np.random.randint(1000)),
-            lambda: MazeEnv(1000 + np.random.randint(100)),
+            lambda: MetaRlWrapperEnv(MazeEnv(np.random.randint(1000))),
+            lambda: MetaRlWrapperEnv(MazeEnv(1000 + np.random.randint(100))),
             cache / ('base.maze.txt'))
     else:
         raise Exception('no such task: %s' % FLAGS.task)
