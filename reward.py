@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-from envs import MetaRlWrapperEnv
+from envs.meta import MetaFeatureEnv
 from envs.maze import MazeEnv
 from misc import hlog, fakeprof
-from model import RnnModel
+from model import RnnModel, SimpleModel
 import rl
 
 import gflags
@@ -28,16 +28,21 @@ def get_cache():
 
 def main():
     seed()
+    meta_featurizer = lambda env: MetaFeatureEnv(env)
     cache = get_cache()
-    template_env = MetaRlWrapperEnv(MazeEnv(0))
+    template_env = MazeEnv(0)
+    template_meta_env = meta_featurizer(template_env)
     if FLAGS.run is None:
         raise Exception("'run' flag must be specified")
     elif FLAGS.run == 'train':
-        model = RnnModel(template_env.featurizer, template_env.n_actions)
-        rl.train(
-            model,
-            lambda: MetaRlWrapperEnv(MazeEnv(np.random.randint(1000))),
-            lambda: MetaRlWrapperEnv(MazeEnv(1000 + np.random.randint(100))),
+        model1 = RnnModel(template_meta_env.featurizer, template_env.n_actions)
+        model2 = SimpleModel(template_env.featurizer, template_env.n_actions)
+        rl.train_meta(
+            model1,
+            model2,
+            lambda: MazeEnv(np.random.randint(1000)),
+            lambda: MazeEnv(1000 + np.random.randint(100)),
+            meta_featurizer,
             cache / ('base.maze.txt'))
     else:
         raise Exception('no such task: %s' % FLAGS.task)

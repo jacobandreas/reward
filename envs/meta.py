@@ -1,5 +1,28 @@
 import numpy as np
 
+class MetaFeatureEnv(object):
+    def __init__(self, underlying):
+        self._underlying = underlying
+        self.n_actions = underlying.n_actions
+        self.feature_shape = underlying.feature_shape + ((self.n_actions + 2,),)
+        self.featurizer = underlying.featurizer.extend(self.feature_shape)
+
+    def reset(self):
+        obs, rew, term = self._underlying.reset()
+        extra_features = np.concatenate((np.zeros(self.n_actions), [0, 0]))
+        return obs + (extra_features,), rew, term
+
+    def step(self, action):
+        obs, rew, term = self._underlying.step(action)
+        act_features = np.zeros(self.n_actions)
+        act_features[action] = 1
+        extra_features = np.concatenate((act_features, [rew, term]))
+        return obs + (extra_features,), rew, term
+
+    def done(self):
+        return self._underlying.done()
+
+# TODO duplication
 class MetaRlWrapperEnv(object):
     def __init__(self, underlying):
         self._underlying = underlying

@@ -1,1 +1,1 @@
-from .rnn import RnnModel
+from .policies import RnnModel, SimpleModel

@@ -54,6 +54,7 @@ class MlpFeaturizer(nn.Module):
         self._n_features = int(sum(np.prod(s) for s in feature_shape))
         self._featurize = nn.Sequential(
             nn.Linear(self._n_features, self.N_HIDDEN),
+            nn.Tanh()
             )
 
     def forward(self, obs):
@@ -65,6 +66,15 @@ class MlpFeaturizer(nn.Module):
     def extend(self, new_feature_shape):
         return MlpFeaturizer(new_feature_shape)
 
+#art1 = [
+#    "#########",
+#    "#dG P D #",
+#    "#########"]
+#art2 = [
+#    "#########",
+#    "# d P GD#",
+#    "#########"]
+
 class MazeEnv(object):
     def __init__(self, maze_id, val=False):
         self._game = None
@@ -75,10 +85,12 @@ class MazeEnv(object):
             data_lines = maze_f.readlines()
         art = [l.strip() for l in data_lines[:-4]]
         self._art = art
+        #self._art = art1 if maze_id % 2 == 0 else art2
         self._features = LANDMARK_FEATURES if FLAGS.show_landmarks else SIMPLE_FEATURES
 
         self.n_actions = 4
-        self.feature_shape = ((9, 9, len(self._features)),)
+        #self.feature_shape = ((9, 9, len(self._features)),)
+        self.feature_shape = ((len(self._features), len(self._art), len(self._art[0])),)
 
         self.featurizer = MlpFeaturizer(self.feature_shape)
         #self.featurizer = ConvMazeFeaturizer()
@@ -90,14 +102,13 @@ class MazeEnv(object):
             sprites={
                 PLAYER: PlayerSprite,
                 GOAL: GoalSprite,
+                'D': DeathSprite,
+                'd': DeathSprite
             },
             drapes={
                 SCORE: ScoreDrape,
             },
-            update_schedule=[PLAYER, GOAL, SCORE])
-            
-        self._game = game
-        return self._process_step(self._game.its_showtime())
+            update_schedule=[PLAYER, GOAL, 'D', 'd', SCORE])
 
         #ui = human_ui.CursesUi(
         #    keys_to_actions={
@@ -106,8 +117,10 @@ class MazeEnv(object):
         #        curses.KEY_LEFT: 2,
         #        curses.KEY_RIGHT: 3},
         #    delay=100)
-        #
         #ui.play(game)
+            
+        self._game = game
+        return self._process_step(self._game.its_showtime())
 
     def step(self, action):
         return self._process_step(self._game.play(action))
@@ -170,3 +183,9 @@ class ScoreDrape(things.Drape):
             the_plot.terminate_episode()
 
         self._player_pos = new_player_pos
+
+class DeathSprite(things.Sprite):
+    def update(self, actions, board, layers, backdrop, things, the_plot):
+        if things['P'].position == self.position:
+            the_plot.add_reward(-1)
+            the_plot.terminate_episode()
