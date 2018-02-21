@@ -27,8 +27,8 @@ class SimpleModel(nn.Module):
         self.rep2 = nn.Sequential(
             nn.Linear(featurizer.n_output + N_HIDDEN, N_HIDDEN),
             nn.Tanh(),
-            nn.Linear(N_HIDDEN, N_HIDDEN),
-            nn.Tanh(),
+            #nn.Linear(N_HIDDEN, N_HIDDEN),
+            #nn.Tanh(),
             )
         self.act_logits = nn.Linear(N_HIDDEN, n_act)
         self.value = nn.Linear(N_HIDDEN, 1)
@@ -45,7 +45,7 @@ class SimpleModel(nn.Module):
         self._mstate = init_mstate
         return self._mstate
 
-    def forward(self, batch, init_mstate=None):
+    def forward(self, batch, init_mstate=None, clone=False):
         n_batch, n_slice = batch.obs[0].data.shape[:2]
         if init_mstate is None:
             init_mstate = batch.mstate
@@ -56,13 +56,15 @@ class SimpleModel(nn.Module):
         value = self.value(rep).view(n_batch * n_slice)
         adv = batch.rew.view(n_batch * n_slice) - value
         mask = batch.mask.view(n_batch * n_slice)
-        surrogate = self.cross_ent(logits, batch.act.view(n_batch * n_slice)) * adv.detach()
+
+        scale = 1 if clone else adv.detach()
+        surrogate = self.cross_ent(logits, batch.act.view(n_batch * n_slice)) * scale
 
         loss = (
             (surrogate * mask).mean()
             + FLAGS.w_value * (adv.pow(2) * mask).mean()
             - FLAGS.w_entropy * (self.entropy(logits) * mask).mean())
-        return loss, init_mstate
+        return loss, init_mstate, surrogate
 
     def act(self, batch):
         v = self._mstate.unsqueeze(1)
@@ -76,6 +78,9 @@ class SimpleModel(nn.Module):
         for i, row in enumerate(probs):
             actions[i] = np.random.choice(4, p=row)
         return actions, self._mstate
+
+    def mstate(self):
+        return self._mstate
 
 class RnnModel(nn.Module):
     def __init__(self, featurizer, n_act):
@@ -106,10 +111,8 @@ class RnnModel(nn.Module):
         return self._rnn_state[0, ...]
 
     @profile
-    def forward(self, batch, init_mstate=None):
+    def forward(self, batch, init_mstate=None, extra_reward = 0):
         n_batch, n_slice = batch.obs[0].data.shape[:2]
-        #print(batch.obs[1])
-        #exit()
         rep = self.rep(batch.obs)
         if init_mstate is None:
             init_mstate = batch.mstate
@@ -122,19 +125,13 @@ class RnnModel(nn.Module):
         value = self.value(rnn_rep).view(n_batch * n_slice)
         adv = batch.rew.view(n_batch * n_slice) - value
         mask = batch.mask.view(n_batch * n_slice)
-        surrogate = self.cross_ent(logits, batch.act.view(n_batch * n_slice)) * adv.detach()
+        scale = adv.detach() + extra_reward
+        surrogate = self.cross_ent(logits, batch.act.view(n_batch * n_slice)) * scale
         loss = (
             (surrogate * mask).mean()
             + FLAGS.w_value * (adv.pow(2) * mask).mean()
             - FLAGS.w_entropy * (self.entropy(logits) * mask).mean())
-        return loss, rnn_state
-
-    def train(self, batch, init_mstate=None):
-        loss, mstate = self(batch, init_mstate)
-        self.opt.zero_grad()
-        loss.backward()
-        self.opt.step()
-        return float(loss.data.cpu().numpy()[0]), mstate
+        return loss, rnn_state, surrogate
 
     @profile
     def act(self, batch):
@@ -152,3 +149,6 @@ class RnnModel(nn.Module):
         # strip stack dimension
         model_state = self._rnn_state[0, ...]
         return actions, model_state
+
+    def mstate(self):
+        return self._rnn_state[0, ...]

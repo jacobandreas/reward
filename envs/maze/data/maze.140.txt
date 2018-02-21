@@ -9,5 +9,5 @@
 #########
 opt 0 0
 hint near 9
-bad 2 2 0 0
+bad 3 3 0 0
 corr n near 2

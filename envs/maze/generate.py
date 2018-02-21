@@ -7,7 +7,7 @@ import numpy as np
 
 np.random.seed(1533)
 
-for i in range(2000):
+for i in range(3000):
     print(i)
     art, opt_actions, hint, bad_actions, correction = sample_maze()
     art_str = '\n'.join(art)

@@ -7,7 +7,7 @@
 ### # # #
 #  1 P# #
 #########
-opt 3 3 0 0 3 3
+opt 2 2 0 0 2 2
 hint near 3
-bad 3 3 3 3
+bad 2 2 2 2
 corr n near 1

@@ -4,7 +4,7 @@ from envs.meta import MetaFeatureEnv
 from envs.maze import MazeEnv
 from misc import hlog, fakeprof
 from model import RnnModel, SimpleModel
-import rl
+import learning
 
 import gflags
 import logging
@@ -37,11 +37,11 @@ def main():
     elif FLAGS.run == 'train':
         model1 = RnnModel(template_meta_env.featurizer, template_env.n_actions)
         model2 = SimpleModel(template_env.featurizer, template_env.n_actions)
-        rl.train_meta(
+        learning.train_sup(
             model1,
             model2,
-            lambda: MazeEnv(np.random.randint(1000)),
-            lambda: MazeEnv(1000 + np.random.randint(100)),
+            lambda: MazeEnv(np.random.randint(2000)),
+            lambda: MazeEnv(2000 + np.random.randint(500)),
             meta_featurizer,
             cache / ('base.maze.txt'))
     else:

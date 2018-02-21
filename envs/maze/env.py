@@ -83,10 +83,15 @@ class MazeEnv(object):
         maze_path = Path(__file__).resolve().parent
         with open(Path(maze_path / ('data/maze.%d.txt' % maze_id))) as maze_f:
             data_lines = maze_f.readlines()
+
         art = [l.strip() for l in data_lines[:-4]]
         self._art = art
         #self._art = art1 if maze_id % 2 == 0 else art2
         self._features = LANDMARK_FEATURES if FLAGS.show_landmarks else SIMPLE_FEATURES
+
+        opt, hint, bad, corr = data_lines[-4:]
+        opt = [int(a) for a in opt.split()[1:]]
+        self.demo = tuple(opt)
 
         self.n_actions = 4
         #self.feature_shape = ((9, 9, len(self._features)),)

@@ -19,9 +19,9 @@ def shortest_path(board, init, goal):
         if r < board.shape[0] - 1 and not board[r+1, c]:
             out.append((SOUTH, (r+1, c)))
         if c > 0 and not board[r, c-1]:
-            out.append((EAST, (r, c-1)))
+            out.append((WEST, (r, c-1)))
         if c < board.shape[1] - 1 and not board[r, c+1]:
-            out.append((WEST, (r, c+1)))
+            out.append((EAST, (r, c+1)))
         return out
 
     stack = [((None, init),)]

@@ -6,6 +6,7 @@ class MetaFeatureEnv(object):
         self.n_actions = underlying.n_actions
         self.feature_shape = underlying.feature_shape + ((self.n_actions + 2,),)
         self.featurizer = underlying.featurizer.extend(self.feature_shape)
+        self.demo = underlying.demo
 
     def reset(self):
         obs, rew, term = self._underlying.reset()
